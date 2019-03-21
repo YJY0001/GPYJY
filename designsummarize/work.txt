@@ -1,0 +1,54 @@
+1、用一句自己的话总结学过的设计模式（要精准）。
+答：描述周围不断重复发生的问题，以及该问题解决的核心方案，就是设计模式。
+
+2、列举SpringAOP、IOC、DI应用的代码片段。
+答：
+SpringAOP就是面向切面编程，在Spring框架中，事务处理，日志记录，权限验证等都是使用AOP(面向切面的方式)去实现。
+例子：
+事务切面：
+<!-- 连接池 -->
+<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+     <property name="dataSource" ref="dataSource"></property>
+</bean>
+<!-- a. 配置事务管理器类（切面类） -->
+<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+     <property name="dataSource" ref="dataSource"></property>
+</bean>
+
+<!-- 规则：get等开头的方法是只读事务； 其他方法是读写事务！ -->
+<tx:advice id="txAdvicer" transaction-manager="txManager">
+      <tx:attributes>
+           <tx:method name="get*" read-only="true"/>
+           <tx:method name="find*" read-only="true"/>
+           <tx:method name="query*" read-only="true"/>
+           <tx:method name="load*" read-only="true"/>
+           <tx:method name="*" read-only="false"/>
+      </tx:attributes>
+</tx:advice>
+ 
+<!-- c. aop配置 = 切入点表达式 + 应用事务通知  -->
+<aop:config>
+    <aop:pointcut expression="execution(* cn.itcast.a_tx_jdbc.*Service.*(..))" id="pt"/>
+     <aop:advisor advice-ref="txAdvicer" pointcut-ref="pt"/>
+</aop:config>
+
+
+IOC就是控制反转，把控制权交给Spring管理，由Spring框架去创建对象
+DI就是依赖注入，当Spring创建对象的时候会把参数的值交给Spring框架注入
+
+例子：
+<!-- 创建连接池 -->
+<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <property name="jdbcUrl" 
+                  value="jdbc:mysql:///day30?useUnicode=true&amp;characterEncoding=utf8">
+        </property>
+        <property name="driverClass" value="com.mysql.jdbc.Driver"></property>
+        <property name="user" value="root"></property>
+        <property name="password" value="root"></property>
+        <property name="initialPoolSize" value="3"></property>
+        <property name="maxPoolSize" value="6"></property>
+</bean>
+
+
+
+
